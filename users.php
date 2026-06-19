@@ -39,8 +39,8 @@ $users = $stmt->fetchAll();
         <tbody>
         <?php foreach ($users as $user): ?>
             <tr>
-                <td class="border-b p-2"><?= $user['id'] ?></td>
-               <td class="border-b p-2"><a href="transacties.php?id=<?= $user['id'] ?>"><?= $user['username'] ?></a></td>
+                <td class="border-b p-2"><?= e($user['id']) ?></td>
+               <td class="border-b p-2"><a href="transacties.php"><?= e($user['username']) ?></a></td>
                 <td class="border-b p-2">€<?= number_format($user['balance'], 2, ',', '.') ?></td>
             </tr>
         <?php endforeach; ?>

@@ -16,7 +16,7 @@ if ($checkTable->rowCount() == 0) {
     $pdo->exec("
         INSERT INTO `transaction` (`id`, `sender`, `receiver`, `amount`, `description`) VALUES
         (1, 3, 2, 65.00, 'Auto'),
-        (2, 5, 2, 94.00, '<script>alert(\"Je bent gehacked\")</script>'),
+        (2, 5, 2, 94.00, 'Testtransactie'),
         (3, 6, 2, 38.84, 'Avondje stappen'),
         (4, 5, 6, 50.00, 'Boodschappen buurtsuper'),
         (5, 6, 5, 50.00, 'Vakantie'),
@@ -24,4 +24,6 @@ if ($checkTable->rowCount() == 0) {
         (7, 5, 6, -47.68, 'Boodschappen');
     ");
 }
+
+$pdo->exec("UPDATE `transaction` SET `description` = 'Testtransactie' WHERE `description` = '<script>alert(\"Je bent gehacked\")</script>'");
 ?>

@@ -44,16 +44,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (isset($error)): ?>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                 <strong class="font-bold">Fout!</strong>
-                <span class="block sm:inline"><?= $error ?></span>
+                <span class="block sm:inline"><?= e($error) ?></span>
             </div>
         <?php endif; ?>
         <?php if (isset($success)): ?>
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
                 <strong class="font-bold">Gelukt!</strong>
-                <span class="block sm:inline"><?= $success ?></span>
+                <span class="block sm:inline"><?= e($success) ?></span>
             </div>
         <?php endif; ?>
-        <form action="<? echo htmlspecialchars($_SERVER["PHP_SELF"]);  ?>" method="post">
+        <form action="<? echo e($_SERVER["PHP_SELF"]);  ?>" method="post">
             <div class="mb-4">
                 <label for="username" class="block text-sm font-medium text-gray-700">Gebruikersnaam:</label>
                 <input type="text" id="username" name="username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">

@@ -7,7 +7,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-$id = $_GET['id'];
+$id = $_SESSION['user']['id'];
 
 // Gebruikersgegevens ophalen
 $stmt = $pdo->prepare("SELECT * FROM user WHERE id = ?");
@@ -29,7 +29,7 @@ $incomingTransactions = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $user['username'] ?> | Omanido</title>
+    <title><?= e($user['username']) ?> | Omanido</title>
     <!-- Voeg Tailwind CSS toe via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
 </head>
@@ -42,7 +42,7 @@ $incomingTransactions = $stmt->fetchAll();
             <div class="flex justify-center">
                 <img src="img/Omanido1.png" alt="Omanido Logo" class="mb-6 w-1/2">
             </div>
-            <h2 class="text-lg text-center font-bold mb-6"><?= $user['username'] ?></h2>
+            <h2 class="text-lg text-center font-bold mb-6"><?= e($user['username']) ?></h2>
             <p class="text-center mb-6">Saldo: €<?= number_format($user['balance'], 2, ',', '.') ?></p>
             <div class="flex justify-center">
                 <a href="dashboard.php"
@@ -59,7 +59,7 @@ $incomingTransactions = $stmt->fetchAll();
             <div class="bg-red-100 p-2 rounded">
                 <?php foreach ($outgoingTransactions as $transaction): ?>
                     <div class="flex justify-between mb-2">
-                        <p><?= $transaction['description'] ?></p>
+                        <p><?= e($transaction['description']) ?></p>
                         <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
                     </div>
                 <?php endforeach; ?>
@@ -75,7 +75,7 @@ $incomingTransactions = $stmt->fetchAll();
                 <div class="bg-green-100 p-2 rounded">
                     <?php foreach ($incomingTransactions as $transaction): ?>
                         <div class="flex justify-between mb-2">
-                            <p><?= $transaction['description'] ?></p>
+                            <p><?= e($transaction['description']) ?></p>
                             <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
                         </div>
                     <?php endforeach; ?>

@@ -91,7 +91,7 @@ $saldo = $stmt->fetchColumn();
                         €<?php echo number_format($saldo, 2, ',', '.'); ?>
                     </p>
                     <div class="text-center">
-                        <a href="transacties.php?id=<?= $_SESSION['user']['id'] ?>" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <a href="transacties.php" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                             Transactieoverzicht
                         </a>
                     </div>
@@ -103,7 +103,7 @@ $saldo = $stmt->fetchColumn();
             <div class="w-full md:w-2/3 px-2 mb-4">
                 <div class="bg-white p-6 rounded-lg shadow-md h-full"> <!-- Verhoogde padding van p-4 naar p-6 -->
                     <h3 class="font-bold text-xl mb-4">Geld Overmaken</h3>
-                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
+                    <form action="<?php echo e($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="mb-4">
                             <label for="ontvanger" class="block text-sm font-medium text-gray-700">Ontvanger:</label>
                             <input type="text" id="ontvanger" name="ontvanger" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
@@ -119,10 +119,10 @@ $saldo = $stmt->fetchColumn();
                         <input type="submit" value="Overmaken" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
                         <?php
                             if(isset($error)) {
-                                echo '<p class="text-red-500 text-sm mt-2">' . $error . '</p>';
+                                echo '<p class="text-red-500 text-sm mt-2">' . e($error) . '</p>';
                             }
                             if(isset($success)) {
-                                echo '<p class="text-green-500 text-sm mt-2">' . $success . '</p>';
+                                echo '<p class="text-green-500 text-sm mt-2">' . e($success) . '</p>';
                             }
                         ?>
                     </form>
