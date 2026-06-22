@@ -43,7 +43,7 @@ $incomingTransactions = $stmt->fetchAll();
                 <img src="img/Omanido1.png" alt="Omanido Logo" class="mb-6 w-1/2">
             </div>
             <h2 class="text-lg text-center font-bold mb-6"><?= e($user['username']) ?></h2>
-            <p class="text-center mb-6">Saldo: €<?= number_format($user['balance'], 2, ',', '.') ?></p>
+            <p class="text-center mb-6"><?= format_money($user['balance']) ?></p>
             <div class="flex justify-center">
                 <a href="dashboard.php"
                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Geld overmaken</a>
@@ -60,7 +60,7 @@ $incomingTransactions = $stmt->fetchAll();
                 <?php foreach ($outgoingTransactions as $transaction): ?>
                     <div class="flex justify-between mb-2">
                         <p><?= e($transaction['description']) ?></p>
-                        <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
+                        <p><?= format_money($transaction['amount']) ?></p>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -76,7 +76,7 @@ $incomingTransactions = $stmt->fetchAll();
                     <?php foreach ($incomingTransactions as $transaction): ?>
                         <div class="flex justify-between mb-2">
                             <p><?= e($transaction['description']) ?></p>
-                            <p>€<?= number_format($transaction['amount'], 2, ',', '.') ?></p>
+                            <p><?= format_money($transaction['amount']) ?></p>
                         </div>
                     <?php endforeach; ?>
                 </div>

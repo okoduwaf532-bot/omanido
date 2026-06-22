@@ -41,7 +41,7 @@ $users = $stmt->fetchAll();
             <tr>
                 <td class="border-b p-2"><?= e($user['id']) ?></td>
                <td class="border-b p-2"><a href="transacties.php"><?= e($user['username']) ?></a></td>
-                <td class="border-b p-2">€<?= number_format($user['balance'], 2, ',', '.') ?></td>
+                <td class="border-b p-2"><?= format_money($user['balance']) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>

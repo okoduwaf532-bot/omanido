@@ -7,7 +7,7 @@ if ($checkTable->rowCount() == 0) {
         `id` int NOT NULL AUTO_INCREMENT,
         `sender` int NOT NULL,
         `receiver` int NOT NULL,
-        `amount` decimal(10,2) NOT NULL,
+        `amount` decimal(65,2) NOT NULL,
         `description` varchar(500) NOT NULL,
         PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci");
@@ -26,4 +26,6 @@ if ($checkTable->rowCount() == 0) {
 }
 
 $pdo->exec("UPDATE `transaction` SET `description` = 'Testtransactie' WHERE `description` = '<script>alert(\"Je bent gehacked\")</script>'");
+
+$pdo->exec("ALTER TABLE `transaction` MODIFY COLUMN `amount` decimal(65,2) NOT NULL");
 ?>

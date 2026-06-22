@@ -3,22 +3,42 @@ session_start();
 include 'includes/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $passwordcheck = $_POST['passwordcheck'];
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $passwordcheck = $_POST['passwordcheck'] ?? '';
 
-    if ($password == $passwordcheck) {
-        $stmt = $pdo->prepare("SELECT * FROM user WHERE username = ?");
-        $stmt->execute([$username]);
-        if ($stmt->rowCount() == 0) {
-            $stmt = $pdo->prepare("INSERT INTO user (username, password, balance, isAdmin) VALUES (?, ?, 100, 0)");
-            $stmt->execute([$username, $password]);
-            $success = "Je account is aangemaakt, je kunt nu inloggen";
-        } else {
-            $error = "Deze gebruikersnaam is al in gebruik";
-        }
-    } else {
+    $username = trim($username);
+    $password = trim($password);
+    $passwordcheck = trim($passwordcheck);
+
+    if (strlen($username) === 0) {
+        $error = "Gebruikersnaam mag niet leeg zijn";
+    } elseif (strlen($password) === 0) {
+        $error = "Wachtwoord mag niet leeg zijn";
+    } elseif ($password !== $passwordcheck) {
         $error = "De wachtwoorden komen niet overeen";
+    } else {
+        [$policyOk, $policyMsg] = password_meets_policy($password, $username);
+        
+        if (!$policyOk) {
+            $error = $policyMsg;
+        } else {
+            // Check if username already exists
+            $stmt = $pdo->prepare("SELECT id FROM user WHERE username = ?");
+            $stmt->execute([$username]);
+            if ($stmt->rowCount() > 0) {
+                $error = "Deze gebruikersnaam is al in gebruik";
+            } else {
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("INSERT INTO user (username, password, balance, isAdmin) VALUES (?, ?, 100, 0)");
+                try {
+                    $stmt->execute([$username, $hashedPassword]);
+                    $success = "Je account is aangemaakt, je kunt nu inloggen";
+                } catch (\Exception $e) {
+                    $error = "Er is een fout opgetreden bij het aanmaken van je account";
+                }
+            }
+        }
     }
 }
 
@@ -61,6 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-6">
                 <label for="password" class="block text-sm font-medium text-gray-700">Wachtwoord:</label>
                 <input type="password" id="password" name="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <p class="text-xs text-gray-600 mt-2">Minimaal 12 tekens, met hoofdletters, kleine letters, cijfers en een speciaal teken.</p>
             </div>
             <div class="mb-6">
                 <label for="passwordcheck" class="block text-sm font-medium text-gray-700">Herhaal wachtwoord:</label>
