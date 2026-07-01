@@ -13,8 +13,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $bedrag = trim($_POST['bedrag'] ?? '');
     $omschrijving = trim($_POST['omschrijving'] ?? '');
 
-    if ($ontvangerNaam === '' || $omschrijving === '' || !preg_match('/^\d+(?:\.\d{1,2})?$/', $bedrag)) {
-        $error = "Vul een geldig bedrag in";
+    $bedragValue = filter_var($bedrag, FILTER_VALIDATE_FLOAT);
+
+    if (
+        $ontvangerNaam === '' ||
+        $omschrijving === '' ||
+        $bedragValue === false ||
+        !is_finite($bedragValue) ||
+        $bedragValue <= 0 ||
+        !preg_match('/^\d+(?:\.\d{1,2})?$/', $bedrag)
+    ) {
+        $error = "Vul een geldig positief bedrag in";
     } else {
         // Controleer of de ontvanger bestaat
         $stmt = $pdo->prepare("SELECT id, username FROM user WHERE username = ?");
@@ -26,17 +35,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $pdo->beginTransaction();
 
                 $stmt = $pdo->prepare("UPDATE user SET balance = balance - ? WHERE id = ? AND balance >= ?");
-                $stmt->execute([$bedrag, $_SESSION['user']['id'], $bedrag]);
+                $stmt->execute([$bedragValue, $_SESSION['user']['id'], $bedragValue]);
 
                 if ($stmt->rowCount() !== 1) {
                     $pdo->rollBack();
                     $error = "Je hebt niet genoeg saldo om dit bedrag over te maken";
                 } else {
                     $stmt = $pdo->prepare("UPDATE user SET balance = balance + ? WHERE id = ?");
-                    $stmt->execute([$bedrag, $ontvanger['id']]);
+                    $stmt->execute([$bedragValue, $ontvanger['id']]);
 
                     $stmt = $pdo->prepare("INSERT INTO transaction (sender, receiver, amount, description) VALUES (?, ?, ?, ?)");
-                    $stmt->execute([$_SESSION['user']['id'], $ontvanger['id'], $bedrag, $omschrijving]);
+                    $stmt->execute([$_SESSION['user']['id'], $ontvanger['id'], $bedragValue, $omschrijving]);
 
                     $pdo->commit();
 
