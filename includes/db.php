@@ -101,6 +101,19 @@ if (!function_exists('password_meets_policy')) {
     }
 }
 
+if (!function_exists('password_is_legacy_plaintext')) {
+    function password_is_legacy_plaintext($storedPassword)
+    {
+        $storedPassword = (string) $storedPassword;
+
+        if ($storedPassword === '') {
+            return false;
+        }
+
+        return password_get_info($storedPassword)['algo'] === 0;
+    }
+}
+
 if (!function_exists('auth_throttle_key')) {
     function auth_throttle_key($username)
     {

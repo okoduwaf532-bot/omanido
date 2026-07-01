@@ -20,7 +20,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($password, $user['password'])) {
+        $isLegacyPassword = $user && password_is_legacy_plaintext($user['password']);
+        $isValidPassword = $user && (
+            password_verify($password, $user['password']) ||
+            ($isLegacyPassword && hash_equals((string) $user['password'], (string) $password))
+        );
+
+        if ($isValidPassword) {
+            if ($isLegacyPassword) {
+                $newHashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $updateStmt = $pdo->prepare('UPDATE user SET password = ? WHERE id = ?');
+                $updateStmt->execute([$newHashedPassword, $user['id']]);
+                $user['password'] = $newHashedPassword;
+            } elseif (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+                $newHashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $updateStmt = $pdo->prepare('UPDATE user SET password = ? WHERE id = ?');
+                $updateStmt->execute([$newHashedPassword, $user['id']]);
+                $user['password'] = $newHashedPassword;
+            }
+
             // Credentials match
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $username;
